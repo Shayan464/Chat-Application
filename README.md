@@ -1,3 +1,5 @@
+<img width="1415" height="804" alt="image" src="https://github.com/user-attachments/assets/106bf28c-5e1e-4d6a-b04d-f7647bf2551d" />
+
 Highlights:
 
 🔐 Custom JWT Authentication (no 3rd-party auth)
