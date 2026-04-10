@@ -7,6 +7,7 @@ import {
   MailIcon,
   UserIcon,
   LoaderIcon,
+  EyeIcon,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { signup } from '../features/auth/authSlice';
@@ -18,12 +19,21 @@ const SignUpPage = () => {
     password: '',
   });
 
+  const [showPass, setShowPass] = useState(false);
+
   const { isSigningUp } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
     e.preventDefault();
     dispatch(signup(formData));
+  };
+
+  const togglePassword = () => {
+    setShowPass(true);
+    setTimeout(() => {
+      setShowPass(false);
+    }, 3000);
   };
 
   return (
@@ -86,17 +96,24 @@ const SignUpPage = () => {
                     <label className="w-12 h-12 mx-auto text-slate-400 mb-4">
                       Password
                     </label>
-                    <div className="relative">
-                      <MailIcon className="auth-input-icon" />
+                    <div className="relative flex ">
+                      <LockIcon className="auth-input-icon" />
                       <input
-                        type="password"
+                        type={showPass ? 'text' : 'password'}
                         value={formData.password}
                         onChange={(e) =>
                           setFormData({ ...formData, password: e.target.value })
                         }
-                        className="input"
+                        className="input "
                         placeholder="Enter your password"
                       />
+                      <button
+                        className="m-2 absolute right-2"
+                        type="button"
+                        onClick={togglePassword}
+                      >
+                        <EyeIcon />
+                      </button>
                     </div>
                   </div>
                   {/* Submit button */}
