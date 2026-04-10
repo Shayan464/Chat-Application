@@ -1,10 +1,26 @@
-import React from 'react';
-import { Route, Routes } from 'react-router-dom';
+import React, { useEffect } from 'react';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import ChatPage from './pages/ChatPage';
 import LoginPage from './pages/LoginPage';
 import SignUpPage from './pages/SignUpPage';
+import { useDispatch, useSelector } from 'react-redux';
+import { checkAuth } from './features/auth/authSlice';
+import PageLoader from './components/PageLoader';
 
 const App = () => {
+  const dispatch = useDispatch();
+  const { authUser, isCheckingAuth, isLoggingIn, onlineUsers } = useSelector(
+    (state) => state.auth
+  );
+
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, [dispatch]);
+
+  console.log({ authUser });
+
+  if (isCheckingAuth) return <PageLoader />;
+
   return (
     <div className="min-h-screen bg-slate-900 relative flex items-center justify-center p-4 overflow-hidden">
       {/* Decorators */}
@@ -14,9 +30,18 @@ const App = () => {
 
       <div className="relative z-10 w-full">
         <Routes>
-          <Route path="/" element={<ChatPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignUpPage />} />
+          <Route
+            path="/"
+            element={authUser ? <ChatPage /> : <Navigate to={'/login'} />}
+          />
+          <Route
+            path="/login"
+            element={!authUser ? <LoginPage /> : <Navigate to={'/'} />}
+          />
+          <Route
+            path="/signup"
+            element={!authUser ? <SignUpPage /> : <Navigate to={'/'} />}
+          />
         </Routes>
       </div>
     </div>
