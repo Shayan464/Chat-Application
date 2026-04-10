@@ -1,24 +1,10 @@
-import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../features/auth/authSlice';
+import React from 'react';
 
 const ChatPage = () => {
-  const dispatch = useDispatch();
-
-  const user = useSelector((state) => state.auth.user);
-
-  useEffect(() => {
-    console.log('USER:', user);
-  }, [user]);
-
-  const handleLogin = () => {
-    dispatch(login('john'));
-  };
   return (
     <div>
-      <button className="btn btn-primary" onClick={handleLogin}>
-        CLick me
-      </button>
+      <h1>Welcome to the chat page</h1>
+      <button className="btn btn-primary">Click here</button>
     </div>
   );
 };
