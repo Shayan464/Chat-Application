@@ -1,4 +1,5 @@
-<img width="1415" height="804" alt="image" src="https://github.com/user-attachments/assets/106bf28c-5e1e-4d6a-b04d-f7647bf2551d" />
+<img width="1421" height="817" alt="image" src="https://github.com/user-attachments/assets/b31e48fe-b91c-40b1-9ebc-f04e9cb651eb" />
+
 
 # Chatify 💬
 
