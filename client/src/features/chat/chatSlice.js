@@ -23,7 +23,7 @@ export const getMyChatPartner = createAsyncThunk(
       const res = await axiosInstance.get('/messages/chat');
       return res.data;
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message);
       console.error(error, 'something went wrong in the getmychatpartner');
       return thunkAPI.rejectWithValue(null);
     }
@@ -82,7 +82,7 @@ const chatSlice = createSlice({
       .addCase(getMyChatPartner.pending, (state) => {
         state.isUsersLoading = true;
       })
-      .addCase(getMyChatPartner.rejected, (state, action) => {
+      .addCase(getMyChatPartner.rejected, (state) => {
         state.chats = null;
         state.isUsersLoading = false;
       });
