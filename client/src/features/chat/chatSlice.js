@@ -24,8 +24,8 @@ export const getMyChatPartner = createAsyncThunk(
       return res.data;
     } catch (error) {
       toast.error(error.response.data.message);
-      console.error(error, 'somethins went wrong in the getmychatpartner');
-      thunkAPI.rejectWithValue(null);
+      console.error(error, 'something went wrong in the getmychatpartner');
+      return thunkAPI.rejectWithValue(null);
     }
   }
 );
@@ -36,11 +36,14 @@ const chatSlice = createSlice({
     contacts: [],
     chats: [],
     messages: [],
+    allContacts: [],
     activeTab: 'chat',
     selectedUser: null,
     isUsersLoading: false,
     isMessagesLoading: false,
-    isSoundEnabled: localStorage.getItem('isSoundEnabled') === 'true',
+    isSoundEnabled: JSON.parse(
+      localStorage.getItem('isSoundEnabled') === 'true'
+    ),
   },
   reducers: {
     toggleSound: (state) => {
@@ -59,6 +62,7 @@ const chatSlice = createSlice({
       // get all contacts
       .addCase(getAllContacts.fulfilled, (state, action) => {
         state.contacts = action.payload;
+        state.allContacts = action.payload;
         state.isUsersLoading = false;
       })
       .addCase(getAllContacts.pending, (state) => {
@@ -66,6 +70,7 @@ const chatSlice = createSlice({
       })
       .addCase(getAllContacts.rejected, (state) => {
         state.contacts = null;
+        state.allContacts = null;
         state.isUsersLoading = false;
       })
 
@@ -78,7 +83,7 @@ const chatSlice = createSlice({
         state.isUsersLoading = true;
       })
       .addCase(getMyChatPartner.rejected, (state, action) => {
-        state.chats = action.payload;
+        state.chats = null;
         state.isUsersLoading = false;
       });
   },

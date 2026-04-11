@@ -58,7 +58,7 @@ export const updateProfile = createAsyncThunk(
       toast.success('Profile updated successfully');
       return res.data;
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
@@ -70,6 +70,7 @@ const authSlice = createSlice({
   initialState: {
     authUser: null,
     isCheckingAuth: true,
+    isProfileUploading: false,
     isSigningUp: false,
     isLoggingIn: false,
     onlineUsers: [],
@@ -126,6 +127,13 @@ const authSlice = createSlice({
       // updateProfile
       .addCase(updateProfile.fulfilled, (state, action) => {
         state.authUser = action.payload;
+        state.isProfileUploading = false;
+      })
+      .addCase(updateProfile.pending, (state) => {
+        state.isProfileUploading = true;
+      })
+      .addCase(updateProfile.rejected, (state) => {
+        state.isProfileUploading = false;
       });
   },
 });

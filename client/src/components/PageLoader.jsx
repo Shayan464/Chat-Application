@@ -1,10 +1,10 @@
+import { Snowflake } from 'lucide-react';
 import React from 'react';
-import { LoaderIcon } from 'react-hot-toast';
 
 const PageLoader = () => {
   return (
     <div className="flex items-center justify-center h-screen">
-      <LoaderIcon className="size-10 animate-spin" />
+      <Snowflake className="animate-spin w-6 h-6 text-blue-500 [animation-duration:1.5s]" />
     </div>
   );
 };

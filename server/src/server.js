@@ -10,7 +10,7 @@ import cors from 'cors';
 const app = express();
 const PORT = ENV.PORT || 3000;
 
-app.use(express.json()); //req.body
+app.use(express.json({ limit: '10mb' })); //req.body
 app.use(cookieParser()); //req.cookie
 app.use(cors({ origin: ENV.CLIENT_URL, credentials: true }));
 
