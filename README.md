@@ -34,7 +34,6 @@ A full-stack real-time chat application built with React, Node.js, and Socket.io
 - Node.js installed
 - MongoDB URI
 - Cloudinary account
-- Resend API key
 - Arcjet API key
 
 ### Environment Variables
@@ -47,10 +46,6 @@ MONGO_URI=your_mongo_uri_here
 NODE_ENV=development
 
 JWT_SECRET=your_jwt_secret
-
-RESEND_API_KEY=your_resend_api_key
-EMAIL_FROM=your_email_from_address
-EMAIL_FROM_NAME=your_email_from_name
 
 CLIENT_URL=http://localhost:5173
 
