@@ -13,7 +13,6 @@ A full-stack real-time chat application built with React, Node.js, and Socket.io
 - ⚡ Real-time messaging via Socket.io
 - 🟢 Online/Offline presence indicators
 - 🔔 Notification & typing sounds (with toggle)
-- 📨 Welcome emails on signup via Resend
 - 🗂️ Image uploads via Cloudinary
 - 🧰 REST API with Node.js & Express
 - 🧱 MongoDB for data persistence
