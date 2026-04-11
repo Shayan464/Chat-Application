@@ -9,7 +9,7 @@ export const getAllContacts = createAsyncThunk(
       const res = await axiosInstance.get('/messages/contacts');
       return res.data;
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message);
       console.error(error, 'error in get all contacts');
       return thunkAPI.rejectWithValue(null);
     }

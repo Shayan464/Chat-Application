@@ -17,8 +17,6 @@ const App = () => {
     dispatch(checkAuth());
   }, [dispatch]);
 
-  console.log({ authUser });
-
   if (isCheckingAuth) return <PageLoader />;
 
   return (

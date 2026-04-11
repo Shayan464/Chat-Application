@@ -9,7 +9,7 @@ export const checkAuth = createAsyncThunk(
       const res = await axiosInstance.get('/auth/check');
       return res.data;
     } catch (error) {
-      console.error(error, 'error in check auth');
+      console.error(error);
       return thunkAPI.rejectWithValue(null);
     }
   }
@@ -23,7 +23,7 @@ export const signup = createAsyncThunk(
       toast.success('Account created successfully!');
       return res.data;
     } catch (error) {
-      toast.error(error.response.data.message);
+      toast.error(error?.response?.data?.message);
       return thunkAPI.rejectWithValue(error.response.data.message);
     }
   }
@@ -35,7 +35,7 @@ export const login = createAsyncThunk('auth/login', async (data, thunkAPI) => {
     toast.success('Logged in successfully');
     return res.data;
   } catch (error) {
-    toast.error(error.response.data.message);
+    toast.error(error?.response?.data?.message);
     return thunkAPI.rejectWithValue(error.response.data.message);
   }
 });
