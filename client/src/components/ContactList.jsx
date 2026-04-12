@@ -25,7 +25,7 @@ const ContactList = () => {
         >
           <div className="flex items-center gap-3">
             {/* TODO: fix this online status and make it work with socket  */}
-            <div className={`avatar-online`}>
+            <div className={`avatar-online avatar shrink-0`}>
               <div className="size-12 rounded-full ">
                 <img
                   src={contact.profilePic || '/avatar.png'}

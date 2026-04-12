@@ -30,6 +30,20 @@ export const getMyChatPartner = createAsyncThunk(
   }
 );
 
+export const getMessagesByUserId = createAsyncThunk(
+  '/messages/getMessagesByUserId',
+  async (userId, thunkAPI) => {
+    try {
+      const res = await axiosInstance.get(`/messages/${userId}`);
+      return res.data;
+    } catch (error) {
+      toast.error(error?.response?.data?.message);
+      console.error(error, 'something went wrong in the getMessagesByUserId');
+      return thunkAPI.rejectWithValue(null);
+    }
+  }
+);
+
 const chatSlice = createSlice({
   name: 'chat',
   initialState: {
@@ -85,6 +99,18 @@ const chatSlice = createSlice({
       .addCase(getMyChatPartner.rejected, (state) => {
         state.chats = null;
         state.isUsersLoading = false;
+      })
+
+      //getMessagesByuserId
+      .addCase(getMessagesByUserId.fulfilled, (state, action) => {
+        state.messages = action.payload;
+        state.isMessagesLoading = false;
+      })
+      .addCase(getMessagesByUserId.pending, (state) => {
+        state.isMessagesLoading = true;
+      })
+      .addCase(getMessagesByUserId.rejected, (state) => {
+        state.isMessagesLoading = false;
       });
   },
 });

@@ -44,7 +44,7 @@ const ProfileHeader = () => {
           {isProfileUploading ? (
             <Snowflake className="animate-spin w-6 h-6 text-blue-500 [animation-duration:1.5s]" />
           ) : (
-            <div className="avatar avatar-online">
+            <div className="avatar avatar-online shrink-0">
               <button
                 className="size-14 rounded-full overflow-hidden relative group"
                 onClick={() => fileInputRef.current.click()}
