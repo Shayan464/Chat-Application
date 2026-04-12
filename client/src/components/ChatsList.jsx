@@ -20,22 +20,25 @@ const ChatsList = () => {
       {chats.map((chat) => (
         <div
           key={chat._id}
-          className="bg-cyan-500/10 p-4 rounded-lg cursor-pointer hover:bg-cyan-500/20 transition-colors"
+          className="flex items-center gap-3 p-3 rounded-xl cursor-pointer hover:bg-cyan-500/10 transition-colors group"
           onClick={() => dispatch(setSelectedUser(chat))}
         >
-          <div className="flex items-center gap-3">
-            {/* TODO: fix this online status and make it work with socket  */}
-            <div className={`avatar-online`}>
-              <div className="size-12 rounded-full ">
-                <img
-                  src={chat.profilePic || '/avatar.png'}
-                  alt={chat.fullName}
-                />
-              </div>
-            </div>
+          {/* Avatar */}
+          <div className="relative avatar avatar-online shrink-0">
+            <img
+              src={chat.profilePic || '/avatar.png'}
+              alt={chat.fullName}
+              className="size-12 rounded-full object-cover"
+            />
+            {/* online dot */}
+          </div>
+
+          {/* Name */}
+          <div className="flex-1 min-w-0">
             <h4 className="text-slate-200 font-medium truncate">
               {chat.fullName}
             </h4>
+            <p className="text-slate-400 text-xs truncate">Click to chat</p>
           </div>
         </div>
       ))}

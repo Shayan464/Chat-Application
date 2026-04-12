@@ -4,7 +4,8 @@ import User from '../models/User.js';
 import bcrypt from 'bcryptjs';
 
 export const signup = async (req, res) => {
-  const { fullName, email, password } = req.body;
+  let { fullName, email, password } = req.body;
+   email = email.toLowerCase()
 
   try {
     if (!fullName || !email || !password) {
@@ -55,10 +56,12 @@ export const signup = async (req, res) => {
 };
 
 export const login = async (req, res) => {
-  const { email, password } = req.body;
+  let { email, password } = req.body;
+  email = email.toLowerCase();
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+
     // never tell the client which one is incorrect password or email
 
     const isPasswordCorrect = await bcrypt.compare(password, user.password);
