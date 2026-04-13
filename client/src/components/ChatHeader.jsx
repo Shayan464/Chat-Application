@@ -36,7 +36,7 @@ const ChatHeader = () => {
           <p className="text-slate-400 text-sm">Online</p>
         </div>
       </div>
-      <button onClick={() => dispatch(setSelectedUser(null))}>
+      <button type="button" onClick={() => dispatch(setSelectedUser(null))}>
         <XIcon className="w-5 h-5 text-slate-400 hover:text-slate-200 transition-colors cursor-pointer" />
       </button>
     </div>

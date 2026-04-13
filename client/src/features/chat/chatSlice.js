@@ -3,42 +3,75 @@ import { axiosInstance } from '../../lib/axios';
 import toast from 'react-hot-toast';
 
 export const getAllContacts = createAsyncThunk(
-  'messages/contact',
+  'chat/getAllContacts',
   async (_, thunkAPI) => {
     try {
       const res = await axiosInstance.get('/messages/contacts');
       return res.data;
     } catch (error) {
-      toast.error(error?.response?.data?.message);
-      console.error(error, 'error in get all contacts');
+      toast.error(error.response.data.message);
       return thunkAPI.rejectWithValue(null);
     }
   }
 );
 
-export const getMyChatPartner = createAsyncThunk(
-  '/messages/chat',
-  async (data, thunkAPI) => {
+export const getMyChatPartners = createAsyncThunk(
+  'chat/getMyChatPartners',
+  async (_, thunkAPI) => {
     try {
-      const res = await axiosInstance.get('/messages/chat');
+      const res = await axiosInstance.get('/messages/chats');
       return res.data;
     } catch (error) {
-      toast.error(error?.response?.data?.message);
-      console.error(error, 'something went wrong in the getmychatpartner');
+      toast.error(error.response.data.message);
       return thunkAPI.rejectWithValue(null);
     }
   }
 );
 
 export const getMessagesByUserId = createAsyncThunk(
-  '/messages/getMessagesByUserId',
+  'chat/getMessagesByUserId',
   async (userId, thunkAPI) => {
     try {
       const res = await axiosInstance.get(`/messages/${userId}`);
       return res.data;
     } catch (error) {
-      toast.error(error?.response?.data?.message);
-      console.error(error, 'something went wrong in the getMessagesByUserId');
+      toast.error(error.response?.data?.message || 'Something went wrong');
+      return thunkAPI.rejectWithValue(null);
+    }
+  }
+);
+
+export const sendMessage = createAsyncThunk(
+  'chat/sendMessage',
+  async (messageData, thunkAPI) => {
+    const { authUser } = thunkAPI.getState().auth;
+    const { selectedUser } = thunkAPI.getState().chat;
+    const tempId = `temp-${Date.now()}`;
+
+    const optimisticMessage = {
+      _id: tempId,
+      senderId: authUser._id,
+      receiverId: selectedUser._id,
+      text: messageData.text,
+      image: messageData.image,
+      createdAt: new Date().toISOString(),
+      isOptimistic: true,
+    };
+
+    thunkAPI.dispatch(addOptimisticMessage(optimisticMessage));
+
+    try {
+      const res = await axiosInstance.post(
+        `/messages/send/${selectedUser._id}`,
+        messageData
+      );
+      thunkAPI.dispatch(
+        replaceOptimisticMessage({ tempId, message: res.data })
+      );
+      return res.data;
+    } catch (error) {
+      thunkAPI.dispatch(removeOptimisticMessage(tempId));
+      toast.error(error.response?.data?.message || 'Something went wrong');
       return thunkAPI.rejectWithValue(null);
     }
   }
@@ -47,17 +80,14 @@ export const getMessagesByUserId = createAsyncThunk(
 const chatSlice = createSlice({
   name: 'chat',
   initialState: {
-    contacts: [],
+    allContacts: [],
     chats: [],
     messages: [],
-    allContacts: [],
-    activeTab: 'chat',
+    activeTab: 'chats',
     selectedUser: null,
     isUsersLoading: false,
     isMessagesLoading: false,
-    isSoundEnabled: JSON.parse(
-      localStorage.getItem('isSoundEnabled') === 'true'
-    ),
+    isSoundEnabled: JSON.parse(localStorage.getItem('isSoundEnabled')) === true,
   },
   reducers: {
     toggleSound: (state) => {
@@ -70,50 +100,70 @@ const chatSlice = createSlice({
     setSelectedUser: (state, action) => {
       state.selectedUser = action.payload;
     },
+    addOptimisticMessage: (state, action) => {
+      state.messages = [...state.messages, action.payload];
+    },
+    replaceOptimisticMessage: (state, action) => {
+      const { tempId, message } = action.payload;
+      state.messages = state.messages.map((msg) =>
+        msg._id === tempId ? message : msg
+      );
+    },
+    removeOptimisticMessage: (state, action) => {
+      state.messages = state.messages.filter(
+        (msg) => msg._id !== action.payload
+      );
+    },
+    addNewMessage: (state, action) => {
+      state.messages = [...state.messages, action.payload];
+    },
   },
   extraReducers: (builder) => {
     builder
-      // get all contacts
-      .addCase(getAllContacts.fulfilled, (state, action) => {
-        state.contacts = action.payload;
-        state.allContacts = action.payload;
-        state.isUsersLoading = false;
-      })
       .addCase(getAllContacts.pending, (state) => {
         state.isUsersLoading = true;
       })
+      .addCase(getAllContacts.fulfilled, (state, action) => {
+        state.allContacts = action.payload;
+        state.isUsersLoading = false;
+      })
       .addCase(getAllContacts.rejected, (state) => {
-        state.contacts = null;
-        state.allContacts = null;
         state.isUsersLoading = false;
       })
 
-      //get my chat partners
-      .addCase(getMyChatPartner.fulfilled, (state, action) => {
+      .addCase(getMyChatPartners.pending, (state) => {
+        state.isUsersLoading = true;
+      })
+      .addCase(getMyChatPartners.fulfilled, (state, action) => {
         state.chats = action.payload;
         state.isUsersLoading = false;
       })
-      .addCase(getMyChatPartner.pending, (state) => {
-        state.isUsersLoading = true;
-      })
-      .addCase(getMyChatPartner.rejected, (state) => {
-        state.chats = null;
+      .addCase(getMyChatPartners.rejected, (state) => {
         state.isUsersLoading = false;
       })
 
-      //getMessagesByuserId
+      .addCase(getMessagesByUserId.pending, (state) => {
+        state.isMessagesLoading = true;
+      })
       .addCase(getMessagesByUserId.fulfilled, (state, action) => {
         state.messages = action.payload;
         state.isMessagesLoading = false;
       })
-      .addCase(getMessagesByUserId.pending, (state) => {
-        state.isMessagesLoading = true;
-      })
       .addCase(getMessagesByUserId.rejected, (state) => {
         state.isMessagesLoading = false;
+        state.messages = [];
       });
   },
 });
 
-export const { toggleSound, setActiveTab, setSelectedUser } = chatSlice.actions;
+export const {
+  toggleSound,
+  setActiveTab,
+  setSelectedUser,
+  addOptimisticMessage,
+  replaceOptimisticMessage,
+  removeOptimisticMessage,
+  addNewMessage,
+} = chatSlice.actions;
+
 export default chatSlice.reducer;
