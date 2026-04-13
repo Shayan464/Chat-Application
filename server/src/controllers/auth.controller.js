@@ -5,7 +5,7 @@ import bcrypt from 'bcryptjs';
 
 export const signup = async (req, res) => {
   let { fullName, email, password } = req.body;
-   email = email.toLowerCase()
+  email = email.toLowerCase();
 
   try {
     if (!fullName || !email || !password) {
@@ -50,8 +50,10 @@ export const signup = async (req, res) => {
       res.status(400).json({ message: 'Invalid user data' });
     }
   } catch (error) {
-    console.log('error in signup controller', error);
-    res.status(500);
+    console.error('error in signup controller', error);
+    res.status(500).json({
+      message: 'Password  must be atleast 6 characters',
+    });
   }
 };
 

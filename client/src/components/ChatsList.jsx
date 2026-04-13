@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMyChatPartner, setSelectedUser } from '../features/chat/chatSlice';
+import { getMyChatPartners, setSelectedUser } from '../features/chat/chatSlice';
 import UsersLoadingSkeleton from './UserLoadingSkeleton';
 import NoChatsFound from './NoChatsFound';
 
@@ -9,7 +9,7 @@ const ChatsList = () => {
   const { chats, isUsersLoading } = useSelector((state) => state.chat);
 
   useEffect(() => {
-    dispatch(getMyChatPartner());
+    dispatch(getMyChatPartners());
   }, [dispatch]);
 
   if (isUsersLoading) return <UsersLoadingSkeleton />;

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { getMessagesByUserId } from '../features/chat/chatSlice';
 import ChatHeader from './ChatHeader';
@@ -12,10 +12,17 @@ const ChatContainer = () => {
   );
   const { authUser } = useSelector((state) => state.auth);
   const dispatch = useDispatch();
+  const messageEndRef = useRef(null);
 
   useEffect(() => {
     dispatch(getMessagesByUserId(selectedUser?._id));
   }, [dispatch, selectedUser]);
+
+  useEffect(() => {
+    if (messageEndRef.current) {
+      messageEndRef.current.scrollIntoView({ behavior: 'smooth' });
+    }
+  }, [messages]);
 
   return (
     <>
@@ -39,17 +46,22 @@ const ChatContainer = () => {
                     <img
                       src={msg.image}
                       alt="shared"
-                      className="rouded-lg h-48 object-cover"
+                      className="rounded-lg h-48 object-cover"
                     />
                   )}
                   {msg.text && <p className="mt-2"> {msg.text}</p>}
 
                   <p className="text-xs mt-1 opacity-75 flex items-center gap-1">
-                    {new Date(msg.createdAt).toISOString().slice(11, 16)}
+                    {new Date(msg.createdAt).toLocaleString(undefined, {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })}
                   </p>
                 </div>
               </div>
             ))}
+            {/* scroll target */}
+            <div ref={messageEndRef} />
           </div>
         ) : isMessagesLoading ? (
           <MessagesLoadingSkeleton />
