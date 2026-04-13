@@ -6,8 +6,8 @@ import path from 'path';
 import { connectDB } from './lib/db.js';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
+import { app, server } from './lib/socket.js';
 
-const app = express();
 const PORT = ENV.PORT || 3000;
 
 app.use(express.json({ limit: '10mb' })); //req.body
@@ -29,6 +29,6 @@ if (ENV.NODE_ENV === 'production') {
 }
 
 connectDB();
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`server is running on port ${PORT}`);
 });
