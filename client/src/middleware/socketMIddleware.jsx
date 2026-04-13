@@ -1,14 +1,13 @@
 import { io } from 'socket.io-client';
 import { setOnlineUsers } from '../features/auth/authSlice';
+import { addNewMessage } from '../features/chat/chatSlice';
 
 const BASE_URL =
   import.meta.env.MODE === 'development' ? 'http://localhost:3000' : '/';
 
-// socket lives outside Redux - one instance for the whole app
 let socket = null;
 
 function connectSocket(store) {
-  // don't create a new socket if already connected
   if (socket?.connected) return;
 
   socket = io(BASE_URL, { withCredentials: true });
@@ -20,17 +19,34 @@ function connectSocket(store) {
 }
 
 function disconnectSocket() {
-  if (socket?.connected) {
-    socket.disconnect();
-  }
+  if (socket?.connected) socket.disconnect();
   socket = null;
 }
 
+function subscribeToMessages(store) {
+  // remove old listener first to avoid duplicate messages
+  socket.off('newMessage');
+
+  socket.on('newMessage', (newMessage) => {
+    const { selectedUser, isSoundEnabled } = store.getState().chat;
+
+    // only show message if it's from the currently open chat
+    if (newMessage.senderId !== selectedUser?._id) return;
+
+    store.dispatch(addNewMessage(newMessage));
+
+    if (isSoundEnabled) {
+      const sound = new Audio('/sounds/notification.mp3');
+      sound.currentTime = 0;
+      sound.play().catch((e) => console.log('Audio play failed:', e));
+    }
+  });
+}
+
 const socketMiddleware = (store) => (next) => (action) => {
-  // let the action update Redux state first
   const result = next(action);
 
-  // connect after user logs in, signs up, or auth is checked
+  // connect socket after login/signup/checkAuth
   const shouldConnect =
     action.type === 'auth/login/fulfilled' ||
     action.type === 'auth/signup/fulfilled' ||
@@ -38,8 +54,16 @@ const socketMiddleware = (store) => (next) => (action) => {
 
   if (shouldConnect) connectSocket(store);
 
-  // disconnect when user logs out
-  if (action.type === 'auth/logout/fulfilled') disconnectSocket();
+  // subscribe to messages when user selects a chat
+  if (action.type === 'chat/setSelectedUser') {
+    if (socket?.connected) subscribeToMessages(store);
+  }
+
+  // cleanup on logout
+  if (action.type === 'auth/logout/fulfilled') {
+    socket?.off('newMessage');
+    disconnectSocket();
+  }
 
   return result;
 };
