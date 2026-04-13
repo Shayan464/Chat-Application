@@ -5,6 +5,7 @@ import { getAllContacts, setSelectedUser } from '../features/chat/chatSlice';
 
 const ContactList = () => {
   const { allContacts, isUsersLoading } = useSelector((state) => state.chat);
+  const { onlineUsers } = useSelector((state) => state.auth);
 
   const dispatch = useDispatch();
 
@@ -25,7 +26,9 @@ const ContactList = () => {
         >
           <div className="flex items-center gap-3">
             {/* TODO: fix this online status and make it work with socket  */}
-            <div className={`avatar-online avatar shrink-0`}>
+            <div
+              className={` avatar ${onlineUsers.includes(contact._id) ? 'avatar-online' : 'avatar-offline'} shrink-0`}
+            >
               <div className="size-12 rounded-full ">
                 <img
                   src={contact.profilePic || '/avatar.png'}

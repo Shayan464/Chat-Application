@@ -7,6 +7,7 @@ import NoChatsFound from './NoChatsFound';
 const ChatsList = () => {
   const dispatch = useDispatch();
   const { chats, isUsersLoading } = useSelector((state) => state.chat);
+  const { onlineUsers } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(getMyChatPartners());
@@ -24,13 +25,16 @@ const ChatsList = () => {
           onClick={() => dispatch(setSelectedUser(chat))}
         >
           {/* Avatar */}
-          <div className="relative avatar avatar-online shrink-0">
-            <img
-              src={chat.profilePic || '/avatar.png'}
-              alt={chat.fullName}
-              className="size-12 rounded-full object-cover"
-            />
-            {/* online dot */}
+          <div className="relative  shrink-0">
+            <div
+              className={`avatar ${onlineUsers.includes(chat._id) ? 'avatar-online' : 'avatar-offline'}`}
+            >
+              <img
+                src={chat.profilePic || '/avatar.png'}
+                alt={chat.fullName}
+                className="size-12 rounded-full object-cover"
+              />
+            </div>
           </div>
 
           {/* Name */}
