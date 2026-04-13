@@ -1,6 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getMessagesByUserId } from '../features/chat/chatSlice';
+import {
+  getMessagesByUserId,
+  setSelectedUser,
+} from '../features/chat/chatSlice';
 import ChatHeader from './ChatHeader';
 import NoChatHistoryPlaceHolder from '../components/NoChatHistoryPlaceHolder';
 import MessageInput from './MessageInput';
@@ -15,8 +18,12 @@ const ChatContainer = () => {
   const messageEndRef = useRef(null);
 
   useEffect(() => {
-    dispatch(getMessagesByUserId(selectedUser?._id));
-  }, [dispatch, selectedUser]);
+    if (!selectedUser?._id) return;
+    dispatch(getMessagesByUserId(selectedUser._id));
+    return () => {
+      dispatch(setSelectedUser(null));
+    };
+  }, [selectedUser?._id]);
 
   useEffect(() => {
     if (messageEndRef.current) {
