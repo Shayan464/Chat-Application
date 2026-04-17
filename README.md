@@ -5,7 +5,7 @@
 
 A full-stack real-time chat application built with React, Node.js, and Socket.io.
 
-- Live Url : https://chat-application-00si.onrender.com
+- Live Url : https://chat-application-al9l.onrender.com
 
 ## Features
 
